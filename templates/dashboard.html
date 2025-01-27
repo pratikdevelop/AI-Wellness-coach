@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between">
+            <h1 id="username" class="text-xl font-bold">Welcome, User</h1>
+            <nav>
+                <a href="/" class="text-white hover:underline">Home</a>
+                <a href="/logout" class="text-white hover:underline ml-4">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Dynamic Cards -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-700">Calories Burned</h2>
+                <p id="calories" class="text-2xl font-bold text-blue-500 mt-4">--</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-700">BMI</h2>
+                <p id="bmi" class="text-2xl font-bold text-green-500 mt-4">--</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-700">Daily Calorie Goal</h2>
+                <p id="calorieGoal" class="text-2xl font-bold text-yellow-500 mt-4">--</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-700">Steps Today</h2>
+                <p id="steps" class="text-2xl font-bold text-purple-500 mt-4">--</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-700">Activity Level</h2>
+                <p id="activityLevel" class="text-2xl font-bold text-red-500 mt-4">--</p>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-xl font-bold text-gray-700">Activity Chart</h2>
+            <canvas id="activityChart" class="w-full h-64 mt-4"></canvas>
+        </div>
+    </main>
+
+    <script>
+        // Fetch user data from an API endpoint
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user-data'); // Adjust endpoint URL as needed
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const data = await response.json();
+
+                // Update UI elements with fetched data
+                document.getElementById('username').textContent = `Welcome, ${data.username}`;
+                document.getElementById('calories').textContent = data.calories || '--';
+                document.getElementById('bmi').textContent = data.bmi || '--';
+                document.getElementById('calorieGoal').textContent = data.calorie_goal || '--';
+                document.getElementById('steps').textContent = data.steps_today || '--';
+                document.getElementById('activityLevel').textContent = data.activity_level || '--';
+
+                // Update Chart.js with dynamic data
+                updateChart(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        // Update Chart.js with fetched data
+        function updateChart(data) {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Steps', 'Calories Burned', 'BMI'],
+                    datasets: [{
+                        label: 'Activity Summary',
+                        data: [
+                            data.steps_today || 0,
+                            data.calories || 0,
+                            data.bmi || 0
+                        ],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Call the fetchUserData function on page load
+        document.addEventListener('DOMContentLoaded', fetchUserData);
+    </script>
+</body>
+</html>
