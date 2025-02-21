@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*{
+  font-family: "Concert One", serif;
+  font-weight: 400;
+  font-style: normal;
+  /* font-family: "Lilita One", serif;
+  font-weight: 400;
+  font-style: normal;
+   font-family: "Germania One", serif;
+  font-weight: 400;
+  font-style: normal; */
+}
+
+
+.gradient-bg {
+            background: linear-gradient(90deg, #4f46e5, #3b82f6);
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
