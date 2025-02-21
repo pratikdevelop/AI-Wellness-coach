@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #eef2f3, #ffffff);
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto flex justify-between items-center px-6 py-4">
+            <h1 class="text-2xl font-bold tracking-wide">AI Wellness Coach</h1>
+            <nav>
+                <a href="/signup" class="text-white hover:underline transition duration-300">Sign Up</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto mt-16">
+        <!-- Heading -->
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome Back!</h2>
+            <p class="text-gray-600">Log in to your account and start your wellness journey.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="login-form" class="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-8">
+            <!-- Username Field -->
+            <div class="mb-6">
+                <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                Log In
+            </button>
+        </form>
+
+        <!-- Additional Links -->
+        <div class="text-center mt-6">
+            <p class="text-gray-600">Don't have an account? 
+                <a href="/signup" class="text-blue-600 font-medium hover:underline">Sign Up</a>
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-6 mt-16">
+        <div class="container mx-auto text-center">
+            <p class="text-sm">&copy; 2025 AI Wellness Coach. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- API Call Script -->
+    <script>
+      document.getElementById('login-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    // Collect form data
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Prepare data to send to API
+    const loginData = {
+        username: username,
+        password: password
+    };
+
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Store the JWT token in localStorage
+            localStorage.setItem('authToken', result.token);
+
+            console.log('Login successful! Redirecting...');
+            window.location.href = '/dashboard'; // Redirect to the user dashboard after successful login
+        } else {
+            console.log('Login failed: ' + result.error); // Show error message
+        }
+    } catch (error) {
+        console.log('An error occurred: ' + error.message);
+    }
+});
+
+   </script>
+</body>
+
+</html>

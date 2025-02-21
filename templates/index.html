@@ -1,0 +1,135 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Wellness Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(90deg, #4f46e5, #3b82f6);
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center px-6 py-4">
+            <h1 class="text-2xl font-bold text-blue-600 tracking-wide">AI Wellness Coach</h1>
+            <nav class="flex items-center space-x-6">
+                <a href="/signup" class="hover:text-blue-600 font-medium transition duration-300">Sign Up</a>
+                <a href="/login" class="hover:text-blue-600 font-medium transition duration-300">Log In</a>
+                <a href="/get-started"
+                    class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-500 transition duration-300">
+                    Get Started
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-24">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-6">Achieve Your Fitness Goals</h2>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">
+                Transform your health and well-being with AI-powered insights and personalized coaching.
+            </p>
+            <a href="/signup"
+                class="bg-white text-blue-600 px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-gray-100 transition duration-300">
+                Get Started Today
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Why Choose AI Wellness Coach?</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Feature 1 -->
+                <div
+                    class="bg-white shadow-md rounded-lg p-6 text-center hover-scale transition-transform duration-300">
+                    <div
+                        class="flex items-center justify-center bg-blue-600 text-white w-16 h-16 rounded-full mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h11M9 21V3m-6 6h18M3 15h11M3 21h11m0 0V9m0 0h7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">AI-Powered Insights</h3>
+                    <p class="text-gray-600">Get actionable recommendations based on your unique health data.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div
+                    class="bg-white shadow-md rounded-lg p-6 text-center hover-scale transition-transform duration-300">
+                    <div
+                        class="flex items-center justify-center bg-blue-600 text-white w-16 h-16 rounded-full mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h11M9 21V3m-6 6h18M3 15h11M3 21h11m0 0V9m0 0h7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Track Progress</h3>
+                    <p class="text-gray-600">Monitor your BMI, activity levels, and calorie goals over time.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div
+                    class="bg-white shadow-md rounded-lg p-6 text-center hover-scale transition-transform duration-300">
+                    <div
+                        class="flex items-center justify-center bg-blue-600 text-white w-16 h-16 rounded-full mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h11M9 21V3m-6 6h18M3 15h11M3 21h11m0 0V9m0 0h7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Personalized Goals</h3>
+                    <p class="text-gray-600">Set and achieve realistic fitness goals with AI guidance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="bg-gray-100 py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-12">What Users Are Saying</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <p class="text-gray-600 italic">"This app changed my life! I lost weight and built healthier habits."
+                    </p>
+                    <p class="mt-4 font-bold text-blue-600">- Emily R.</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <p class="text-gray-600 italic">"Tracking my progress has never been this easy and intuitive."</p>
+                    <p class="mt-4 font-bold text-blue-600">- James W.</p>
+                </div>
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <p class="text-gray-600 italic">"The personalized AI recommendations are spot on."</p>
+                    <p class="mt-4 font-bold text-blue-600">- Sarah L.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-8">
+        <div class="container mx-auto text-center">
+            <p class="font-medium">&copy; 2025 AI Wellness Coach. All Rights Reserved.</p>
+            <p class="text-sm mt-2">Email us: support@aiwellnesscoach.com</p>
+        </div>
+    </footer>
+</body>
+
+</html>
