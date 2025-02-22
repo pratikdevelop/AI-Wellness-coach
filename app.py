@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_cors import CORS
+from flask_mail import Mail, Message
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -7,8 +8,10 @@ from pymongo import MongoClient
 import bcrypt
 import jwt
 import os
+import requests
 from datetime import datetime, timedelta
 from bson import ObjectId
+from bson.json_util import dumps
 
 app = Flask(__name__)
 CORS(app)
@@ -17,9 +20,18 @@ CORS(app)
 client = MongoClient(
     "mongodb+srv://devopsdeveloper98:n8kTwBLCwsSJYmIA@custer-o.qj7um.mongodb.net/app-db?retryWrites=true&w=majority&appName=custer-o"
 )
-
 db = client['wellness_db']
 users_collection = db['users']
+logs_collection = db['logs']
+admin_collection = db['admin']
+
+# Flask-Mail Configuration
+app.config['MAIL_SERVER'] = 'smtp.example.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'your-email@example.com'
+app.config['MAIL_PASSWORD'] = 'your-email-password'
+mail = Mail(app)
 
 # App secret key
 app.config['SECRET_KEY'] = "[uF8U_%p{xDG8R-%yH.b}eiK62iTr("
@@ -46,7 +58,26 @@ def decode_jwt(token):
     except jwt.InvalidTokenError:
         return None
 
-# Prediction Function (Updated to use the new model with activity level encoded)
+# Password Reset Token Generation
+def generate_password_reset_token(email):
+    expiration_time = datetime.utcnow() + timedelta(hours=1)
+    payload = {
+        'email': email,
+        'exp': expiration_time
+    }
+    return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+
+# Fitbit API Integration
+def get_fitbit_data(access_token):
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    response = requests.get('https://api.fitbit.com/1/user/-/activities/steps/date/today/1d.json', headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+# Prediction Function
 def predict_calories(data):
     input_data = np.array([[data['age'], data['steps'], data['weight'], data['height'], data['activity_level_encoded']]])
     prediction = model.predict(input_data)
@@ -57,7 +88,7 @@ def calculate_bmi(weight, height):
     height_m = height / 100  # Convert height to meters
     return round(weight / (height_m ** 2), 2)
 
-# Calorie Goal Based on Activity Level
+# Calorie Goal Calculation
 def calculate_calorie_goal(activity_level, weight, height, age):
     bmr = 10 * weight + 6.25 * height - 5 * age + 5  # Mifflin-St Jeor Equation for Men
     activity_factors = {
@@ -126,7 +157,9 @@ def register_user():
             "email": data.get('email', ''),
             "age": data.get('age', 0),
             "weight": data.get('weight', 0),
-            "height": data.get('height', 0)
+            "height": data.get('height', 0),
+            "goals": data.get('goals', {}),
+            "fitbit_access_token": data.get('fitbit_access_token', '')
         })
 
         return jsonify({"message": "User registered successfully!"}), 201
@@ -134,7 +167,6 @@ def register_user():
     except Exception as e:
         app.logger.error(f"Error registering user: {e}")
         return jsonify({"error": "An error occurred during registration"}), 500
-
 
 @app.route('/api/login', methods=['POST'])
 def login_user():
@@ -151,9 +183,48 @@ def login_user():
         return jsonify({"message": "Login successful!", "token": token}), 200
     return jsonify({"error": "Incorrect password"}), 400
 
+@app.route('/api/reset_password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email')
+    user = users_collection.find_one({"email": email})
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    reset_token = generate_password_reset_token(email)
+    reset_link = f"https://yourapp.com/reset_password?token={reset_token}"
+
+    msg = Message("Password Reset Request", sender="your-email@example.com", recipients=[email])
+    msg.body = f"Click the link to reset your password: {reset_link}"
+    mail.send(msg)
+
+    return jsonify({"message": "Password reset link sent to your email"}), 200
+
+@app.route('/api/update_password', methods=['POST'])
+def update_password():
+    data = request.json
+    token = data.get('token')
+    new_password = data.get('new_password')
+    if not token or not new_password:
+        return jsonify({"error": "Token and new password are required"}), 400
+
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        email = payload.get('email')
+        user = users_collection.find_one({"email": email})
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+        users_collection.update_one({"email": email}, {"$set": {"password": hashed_password}})
+        return jsonify({"message": "Password updated successfully!"}), 200
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token has expired"}), 400
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 400
+
 @app.route('/api/profile', methods=['GET'])
 def get_user_profile():
-    # Get the token from the request header
     token = request.headers.get('Authorization').split()
     if len(token) == 2 and token[0].lower() == 'bearer':
         bearer_token = token[1]
@@ -163,32 +234,38 @@ def get_user_profile():
     if not bearer_token:
         return jsonify({"error": "Token is missing"}), 401
 
-    # Decode the token and extract user ID
     decoded_token = decode_jwt(bearer_token)
-    print(decoded_token)
     if not decoded_token:
         return jsonify({"error": "Invalid or expired token"}), 401
 
     user_id = decoded_token['user_id']
-
-    # Convert string user_id to ObjectId if needed
     if isinstance(user_id, str):
         user_id = ObjectId(user_id)
 
-
-    # Fetch user profile from DB using the user ID
     user = users_collection.find_one({"_id": user_id})
-    print(user)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Return user profile details
     user_profile = {
         "username": user['username'],
         "email": user.get('email', ''),
         "age": user.get('age', 0),
         "weight": user.get('weight', 0),
-        "height": user.get('height', 0)
+        "height": user.get('height', 0),
+        "goals": user.get('goals', {}),
+        "workouts": user.get('workout_suggestion', []),
+        "meals": user.get('meals', []),
+        "water_intake": user.get('water_intake', 0),
+        "sleep": user.get('sleep', 0),
+        "mood": user.get('mood', 0),
+        "medications": user.get('medications', []),
+        "allergies": user.get('allergies', []),
+        "medical_conditions": user.get('medical_conditions', []),
+        "emergency_contacts": user.get('emergency_contacts', []),
+        "bmi": user.get('bmi', []),
+        'calories': user.get('predicted_calories', []),
+        "fitbit_data": get_fitbit_data(user.get('fitbit_access_token', '')),
+        'nutrition': user.get('nutrition', {})
     }
     
     return jsonify({"profile": user_profile}), 200
@@ -198,32 +275,16 @@ def predict():
     data = request.json
     if 'age' not in data or 'steps' not in data or 'weight' not in data or 'height' not in data or 'activity_level' not in data:
         return jsonify({"error": "Missing required fields"}), 400
-    age = float(data.get('age', 0))  # Use default value of 0 if not provided
-    steps = float(data.get('steps', 0))
-    weight = float(data.get('weight', 0))
-    height = float(data.get('height', 0))
-    activity_level = data.get('activity_level', '')
 
-    # Encode activity level (Assumes the activity level is a string and needs to be encoded)
     activity_level_map = {'Sedentary': 0, 'Lightly Active': 1, 'Active': 2, 'Very Active': 3}
     data['activity_level_encoded'] = activity_level_map.get(data['activity_level'], 0)
 
-    # Predict the calories
     predicted_calories = predict_calories(data)
-    
-    # Calculate BMI
     bmi = calculate_bmi(data['weight'], data['height'])
-    
-    # Calculate Calorie Goal
     calorie_goal = calculate_calorie_goal(data['activity_level'], data['weight'], data['height'], data['age'])
-    
-    # Calculate Macronutrient Distribution
     nutrition = calculate_nutrition(predicted_calories, data['activity_level'])
-    
-    # Workout suggestion based on activity level
     workout = suggest_workout(data['activity_level'])
-    
-    # Prepare the prediction results data
+
     prediction_results = {
         "predicted_calories": predicted_calories,
         "bmi": bmi,
@@ -232,7 +293,6 @@ def predict():
         "workout_suggestion": workout
     }
 
-    # Get the token from the request headers
     token = request.headers.get('Authorization').split()
     if len(token) == 2 and token[0].lower() == 'bearer':
         bearer_token = token[1]
@@ -242,37 +302,30 @@ def predict():
     if not bearer_token:
         return jsonify({"error": "Token is missing"}), 401
 
-    # Decode the token and extract user ID
     decoded_token = decode_jwt(bearer_token)
     if not decoded_token:
         return jsonify({"error": "Invalid or expired token"}), 401
 
     user_id = decoded_token['user_id']
-
-    # Convert string user_id to ObjectId if needed
     if isinstance(user_id, str):
         user_id = ObjectId(user_id)
 
-    # Update the user's profile in the database with the prediction results
     users_collection.update_one(
         {"_id": user_id},
         {"$set": {
             "predicted_calories": predicted_calories,
             "bmi": bmi,
+            "height": data['height'],
+            "weight": data['weight'],
+            "goals":calorie_goal,
             "calorie_goal": calorie_goal,
             "nutrition": nutrition,
             "workout_suggestion": workout,
-            "last_prediction_date": datetime.utcnow()  # Store the date of last prediction
+            "last_prediction_date": datetime.utcnow()
         }}
     )
 
-    return jsonify({
-        "calories": predicted_calories,
-        "bmi": bmi,
-        "calorie_goal": calorie_goal,
-        "nutrition": nutrition,
-        "workout_suggestion": workout
-    }), 200
+    return jsonify(prediction_results), 200
 
 @app.route('/api/log_progress', methods=['POST'])
 def log_progress():
@@ -288,12 +341,19 @@ def log_progress():
         'calories_consumed': data.get('calories_consumed'),
         'weight': data.get('weight')
     }
-    db.logs.insert_one(log_data)
+    logs_collection.insert_one(log_data)
     return jsonify({"message": "Progress logged successfully!"}), 201
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
+@app.route('/api/admin/dashboard', methods=['GET'])
+def admin_dashboard():
+    # Fetch all users and their progress
+    users = list(users_collection.find({}, {"username": 1, "email": 1, "last_prediction_date": 1}))
+    logs = list(logs_collection.find({}, {"user_id": 1, "date": 1, "steps": 1, "calories_consumed": 1, "weight": 1}))
+    
+    return jsonify({
+        "users": users,
+        "logs": logs
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

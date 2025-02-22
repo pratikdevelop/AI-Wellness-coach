@@ -1,3 +1,7 @@
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +9,7 @@
   font-family: "Concert One", serif;
   font-weight: 400;
   font-style: normal;
+  text-transform: none !important;
   /* font-family: "Lilita One", serif;
   font-weight: 400;
   font-style: normal;

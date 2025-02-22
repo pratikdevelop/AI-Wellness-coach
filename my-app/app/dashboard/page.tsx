@@ -2,12 +2,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
-import { Chart } from "chart.js";
 import React, { useEffect, useState } from "react";
+import dynamic from 'next/dynamic';
+const BarChart = dynamic(() => import('@mui/x-charts').then(mod => mod.BarChart), { ssr: false });
 
-const page = () => {
+const Page = () => {
+
   const [user, setUser] = useState<any>({});
   const [predictionData, setPredictionData] = useState<any>(null);
+  const [fitbitData, setFitbitData] = useState<any>(null);
 
   useEffect(() => {
     console.log("useEffect hook is called");
@@ -26,7 +29,7 @@ const page = () => {
       if (!response.ok) throw new Error("Failed to fetch user data");
       const data = await response.json();
       setUser(data.profile);
-      updateChart(data.profile);
+      setFitbitData(data.profile.fitbit_data); // Set Fitbit data
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -54,64 +57,29 @@ const page = () => {
       });
       if (!response.ok) throw new Error("Prediction failed");
       const predictionResult = await response.json();
-      setPredictionData(predictionResult)
-      setUser({ ...user, predictionResult });
-      
-      updateChart(predictionResult)
+      setPredictionData(predictionResult);
+      setUser({ ...user, ...predictionResult }); // Update user data with prediction results
     } catch (error) {
       console.error("Error predicting data:", error);
     }
   }
 
-  function updateChart(data: { steps_today: any; calories: any; bmi: any }) {
-    const ctx = document.getElementById("activityChart") as HTMLCanvasElement;
-
-    if (ctx) {
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Steps", "Calories Burned", "BMI"],
-          datasets: [
-            {
-              label: "Activity Summary",
-              data: [data.steps_today || 0, data.calories || 0, data.bmi || 0],
-              backgroundColor: [
-                "rgba(75, 192, 192, 0.6)",
-                "rgba(255, 206, 86, 0.6)",
-                "rgba(153, 102, 255, 0.6)",
-              ],
-              borderColor: [
-                "rgba(75, 192, 192, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(153, 102, 255, 1)",
-              ],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } },
-        },
-      });
-    }
-  }
 
   return (
     <div>
       <main className="container mx-auto mt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-lg font-bold text-gray-700">Calories Burned</h2>
+            <h2 className="text-lg font-bold text-gray-700">Predicted Calories</h2>
             <p id="calories" className="text-2xl font-bold text-blue-500 mt-4">
-              {user?.calories}
+              {predictionData?.predicted_calories || user?.calories}
             </p>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-lg font-bold text-gray-700">BMI</h2>
             <p id="bmi" className="text-2xl font-bold text-green-500 mt-4">
-              {user?.bmi}
+              {predictionData?.bmi || user?.bmi}
             </p>
           </div>
 
@@ -123,32 +91,63 @@ const page = () => {
               id="calorieGoal"
               className="text-2xl font-bold text-yellow-500 mt-4"
             >
-              {user?.calorie_goal}
+              {predictionData?.calorie_goal || user?.goals}
             </p>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-lg font-bold text-gray-700">Steps Today</h2>
-            <p id="steps" className="text-2xl font-bold text-purple-500 mt-4">
-              {user?.steps_today}
+            <h2 className="text-lg font-bold text-gray-700">Nutrition</h2>
+            <div className="mt-4">
+              <p className="text-gray-600">Carbs: {predictionData?.nutrition?.carbs || user?.nutrition?.carbs}g</p>
+              <p className="text-gray-600">Protein: {predictionData?.nutrition?.protein || user?.nutrition?.protein}g</p>
+              <p className="text-gray-600">Fat: {predictionData?.nutrition?.fat || user?.nutrition?.fat}g</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-lg font-bold text-gray-700">Workout Suggestion</h2>
+            <p className="text-gray-600 mt-4">
+              {predictionData?.workout_suggestion || user?.workouts}
             </p>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-lg font-bold text-gray-700">Activity Level</h2>
-            <p
-              id="activityLevel"
-              className="text-2xl font-bold text-red-500 mt-4"
-            >
-              {user?.activity_level}
+            <h2 className="text-lg font-bold text-gray-700">Fitbit Data</h2>
+            <p className="text-lg text-gray-600 mt-4">
+              {fitbitData ? JSON.stringify(fitbitData) : "No Fitbit data available"}
             </p>
           </div>
         </div>
 
-        <div className="mt-8">
-          <h2 className="text-xl font-bold text-gray-700">Activity Chart</h2>
-          <canvas id="activityChart" className="w-full h-64 mt-4"></canvas>
-        </div>
+
+    <div className="mt-8">
+      <h2 className="text-xl font-bold text-gray-700">Wellness Metrics Chart</h2>
+      <div className="mt-4" style={{ width: "100%", height: "400px" }}>
+        <BarChart
+          xAxis={[
+            {
+              scaleType: 'band',
+              data: [
+                'Predicted Calories', 
+                'BMI', 
+                'Calorie Goal'
+              ]
+            }
+          ]}
+          series={[
+            {
+              data: [
+                predictionData?.predicted_calories || user?.calories,
+                predictionData?.bmi || user?.bmi,
+                predictionData?.calorie_goal || user?.goals
+              ],
+            }
+          ]}
+
+        />
+      </div>
+    </div>
+
 
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-bold text-gray-700">AI Wellness Coach</h2>
@@ -229,12 +228,17 @@ const page = () => {
           <div id="result" className="mt-6">
             {predictionData && (
               <div>
-                <h3>Prediction Results:</h3>
-                <p>Calories: {predictionData.calories}</p>
+                <h3 className="text-lg font-bold text-gray-700">Prediction Results:</h3>
+                <p>Predicted Calories: {predictionData.predicted_calories}</p>
                 <p>BMI: {predictionData.bmi}</p>
                 <p>Calorie Goal: {predictionData.calorie_goal}</p>
-                <p>Steps Today: {predictionData.steps_today}</p>
-                <p>Activity Level: {predictionData.activity_level}</p>
+                <p>Nutrition:</p>
+                <ul>
+                  <li>Carbs: {predictionData.nutrition.carbs}g</li>
+                  <li>Protein: {predictionData.nutrition.protein}g</li>
+                  <li>Fat: {predictionData.nutrition.fat}g</li>
+                </ul>
+                <p>Workout Suggestion: {predictionData.workout_suggestion}</p>
               </div>
             )}
           </div>
@@ -244,4 +248,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
