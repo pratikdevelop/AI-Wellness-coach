@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+*{
+  font-family: "Concert One", serif;
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none !important;
+  /* font-family: "Lilita One", serif;
+  font-weight: 400;
+  font-style: normal;
+   font-family: "Germania One", serif;
+  font-weight: 400;
+  font-style: normal; */
+}
+.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+    border-right-style: hidden !important;
+  }
+  .mat-mdc-flat-button, .mat-mdc-flat-button .mdc-button__ripple {
+    border-radius: 2% !important;
+  }
+
+  
+.gradient-bg {
+    background: linear-gradient(90deg, #4f46e5, #3b82f6);
+}
+.hover-scale:hover {
+    transform: scale(1.05);
+}

@@ -1,0 +1,73 @@
+<div class="flex relative flex-col p-3 overflow-y-auto">
+    <section class="gradient-bg text-white py-24 text-center">
+      <div class="container mx-auto">
+        <h2 class="text-5xl font-bold mb-6">Achieve Your Fitness Goals</h2>
+        <p class="text-lg mb-8 max-w-3xl mx-auto">
+          Transform your health and well-being with AI-powered insights and
+          personalized coaching.
+        </p>
+        <a
+          routerLink="/signup"
+          class="bg-white text-blue-600 px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-gray-100 transition duration-300"
+        >
+          Get Started Today
+        </a>
+      </div>
+    </section>
+  
+    <section class="py-16 bg-gray-50">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">
+          Why Choose AI Wellness Coach?
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          <!-- Use ngFor for dynamic rendering -->
+          <div *ngFor="let feature of features; let index = index" class="bg-white shadow-md rounded-lg p-6 text-center hover:scale-105 transition-transform duration-300">
+            <div class="flex items-center justify-center bg-blue-600 text-white w-16 h-16 rounded-full mx-auto mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h11M9 21V3m-6 6h18M3 15h11M3 21h11m0 0V9m0 0h7" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-4">{{ feature.title }}</h3> <!-- Correct Interpolation -->
+            <p class="text-gray-600">{{ feature.description }}</p> <!-- Correct Interpolation -->
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="bg-gray-100 py-16">
+      <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-12">What Users Are Saying</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Use ngFor for dynamic rendering -->
+          <div *ngFor="let testimonial of testimonials; let index = index" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+            <p class="text-gray-600 italic">"{{ testimonial.quote }}"</p>
+            <p class="mt-4 font-bold text-blue-600">- {{ testimonial.name }}</p> <!-- Correct Interpolation -->
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="py-16 text-center">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold mb-6">Join Us Today</h2>
+        <p class="text-lg mb-8 max-w-2xl mx-auto">
+          Sign up now and take the first step towards a healthier, happier you!
+        </p>
+        <a
+          routerLink="/signup"
+          class="bg-blue-600 text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-blue-700 transition duration-300"
+        >
+          Sign Up Now
+        </a>
+      </div>
+    </section>
+  
+    <footer class="bg-blue-600 text-white py-8 text-center">
+      <div class="container mx-auto">
+        <p class="font-medium">&copy; 2025 AI Wellness Coach. All Rights Reserved.</p>
+        <p class="text-sm mt-2">Email us: support&#x40;aiwellnesscoach.com</p>
+      </div>
+    </footer>
+  </div>
+  

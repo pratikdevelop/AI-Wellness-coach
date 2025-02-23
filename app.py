@@ -265,7 +265,9 @@ def get_user_profile():
         "bmi": user.get('bmi', []),
         'calories': user.get('predicted_calories', []),
         "fitbit_data": get_fitbit_data(user.get('fitbit_access_token', '')),
-        'nutrition': user.get('nutrition', {})
+        'nutrition': user.get('nutrition', {}),
+        'activity_level': user.get('activity_level', []),
+        'steps':  user.get('steps', [])
     }
     
     return jsonify({"profile": user_profile}), 200
@@ -290,7 +292,8 @@ def predict():
         "bmi": bmi,
         "calorie_goal": calorie_goal,
         "nutrition": nutrition,
-        "workout_suggestion": workout
+        "workout_suggestion": workout,
+        
     }
 
     token = request.headers.get('Authorization').split()
@@ -321,7 +324,10 @@ def predict():
             "calorie_goal": calorie_goal,
             "nutrition": nutrition,
             "workout_suggestion": workout,
-            "last_prediction_date": datetime.utcnow()
+            "last_prediction_date": datetime.utcnow(),
+            'age': data['age'] ,
+            'activity_level':  data['activity_level_encoded'],
+            'steps': data['steps']
         }}
     )
 

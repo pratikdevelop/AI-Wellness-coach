@@ -1,0 +1,110 @@
+<main class="container mx-auto mt-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-bold text-gray-700">Predicted Calories</h2>
+        <p class="text-2xl font-bold text-blue-500 mt-4">{{ predictionData?.predicted_calories || user?.calories }}</p>
+      </div>
+  
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-bold text-gray-700">BMI</h2>
+        <p class="text-2xl font-bold text-green-500 mt-4">{{ predictionData?.bmi || user?.bmi }}</p>
+      </div>
+  
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-bold text-gray-700">Daily Calorie Goal</h2>
+        <p class="text-2xl font-bold text-yellow-500 mt-4">{{ predictionData?.calorie_goal || user?.goals }}</p>
+      </div>
+  
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-bold text-gray-700">Nutrition</h2>
+        <div class="mt-4">
+          <p class="text-gray-600">Carbs: {{ predictionData?.nutrition?.carbs || user?.nutrition?.carbs }}g</p>
+          <p class="text-gray-600">Protein: {{ predictionData?.nutrition?.protein || user?.nutrition?.protein }}g</p>
+          <p class="text-gray-600">Fat: {{ predictionData?.nutrition?.fat || user?.nutrition?.fat }}g</p>
+        </div>
+      </div>
+  
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-bold text-gray-700">Workout Suggestion</h2>
+        <p class="text-gray-600 mt-4">{{ predictionData?.workout_suggestion || user?.workouts }}</p>
+      </div>
+  
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-lg font-bold text-gray-700">Fitbit Data</h2>
+        <p class="text-lg text-gray-600 mt-4">{{ fitbitData ? (fitbitData | json) : 'No Fitbit data available' }}</p>
+      </div>
+    </div>
+  
+    <!-- Wellness Chart -->
+    <div class="mt-8">
+        <h2 class="text-xl font-bold text-gray-700">Wellness Metrics Chart</h2>
+        <div class="mt-4" style="width: 100%; height: 400px;">
+  
+          <canvas
+    baseChart
+    [data]="barChartData"
+    [options]="barChartOptions"
+    [type]="barChartType"
+
+  >
+  </canvas>
+        </div>
+      </div>
+  
+    <!-- Wellness Form -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6 space-y-4">
+      <h2 class="text-3xl font-bold text-gray-700">AI Wellness Coach</h2>
+      <form [formGroup]="wellnessForm" (ngSubmit)="handlePrediction()" class="mt-4 space-y-6">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Age</mat-label>
+          <input matInput type="number" formControlName="age" required [(ngModel)]="formData.age">
+          <mat-error *ngIf="wellnessForm.get('age')?.hasError('required')">Age is required</mat-error>
+        </mat-form-field>
+      
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Steps</mat-label>
+          <input matInput type="number" formControlName="steps" required [(ngModel)]="formData.steps">
+          <mat-error *ngIf="wellnessForm.get('steps')?.hasError('required')">Steps are required</mat-error>
+        </mat-form-field>
+      
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Weight (kg)</mat-label>
+          <input matInput type="number" formControlName="weight" required [(ngModel)]="formData.weight">
+          <mat-error *ngIf="wellnessForm.get('weight')?.hasError('required')">Weight is required</mat-error>
+        </mat-form-field>
+      
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Height (cm)</mat-label>
+          <input matInput type="number" formControlName="height" required [(ngModel)]="formData.height">
+          <mat-error *ngIf="wellnessForm.get('height')?.hasError('required')">Height is required</mat-error>
+        </mat-form-field>
+      
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Activity Level</mat-label>
+          <mat-select formControlName="activity_level" [(ngModel)]="formData.activity_level">
+            <mat-option value="Sedentary">Sedentary</mat-option>
+            <mat-option value="Lightly Active">Lightly Active</mat-option>
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Very Active">Very Active</mat-option>
+          </mat-select>
+        </mat-form-field>
+      
+        <button mat-raised-button color="primary" type="submit" [disabled]="wellnessForm.invalid">Predict</button>
+      </form>
+  
+      <div *ngIf="predictionData" class="mt-6">
+        <h3 class="text-lg font-bold text-gray-700">Prediction Results:</h3>
+        <p>Predicted Calories: {{ predictionData?.predicted_calories }}</p>
+        <p>BMI: {{ predictionData?.bmi }}</p>
+        <p>Calorie Goal: {{ predictionData?.calorie_goal }}</p>
+        <p>Nutrition:</p>
+        <ul>
+          <li>Carbs: {{ predictionData?.nutrition?.carbs }}g</li>
+          <li>Protein: {{ predictionData?.nutrition?.protein }}g</li>
+          <li>Fat: {{ predictionData?.nutrition?.fat }}g</li>
+        </ul>
+        <p>Workout Suggestion: {{ predictionData?.workout_suggestion }}</p>
+      </div>
+    </div>
+  </main>
+  

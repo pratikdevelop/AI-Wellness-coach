@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "AI-wellness-coach",
+    "public": "dist/app/browser/",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

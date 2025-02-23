@@ -1,0 +1,53 @@
+<main class="container mx-auto mt-16">
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="max-w-lg flex flex-col space-y-6 mx-auto bg-white shadow-lg rounded-lg p-8">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome Back!</h2>
+          <p class="text-gray-600">Log in to your account and start your wellness journey.</p>
+        </div>
+      <div class="mb-6">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Enter your email" required />
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email is required.</mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Please enter a valid email.</mat-error>
+        </mat-form-field>
+      </div>
+  
+      <div class="mb-6">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="Enter your password"
+            required
+          />
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password is required.</mat-error>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">Password must be at least 6 characters long.</mat-error>
+        </mat-form-field>
+      </div>
+  
+      <button
+        mat-flat-button
+        color="primary"
+        class="w-full"
+        [disabled]="loginForm.invalid"
+        type="submit"
+      >
+        Log In
+      </button>
+      <div class="text-center">
+        <p class="text-gray-600">
+          Don't have an account?
+          <a routerLink="/signup" class="text-blue-600 font-medium hover:underline">Sign Up</a>
+        </p>
+      </div>
+    </form>
+  
+  </main>
+  

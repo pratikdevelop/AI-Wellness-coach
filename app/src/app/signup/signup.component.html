@@ -1,0 +1,87 @@
+<main class="container mx-auto mt-16">
+    
+    <form id="signup-form" class="w-4/6 flex flex-col  mx-auto space-y-6 bg-white shadow-lg rounded-lg p-8" [formGroup]="signupForm">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Create Your Account</h2>
+          <p class="text-gray-600">Start your journey to better health and wellness today.</p>
+        </div>
+        <!-- Username Field -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Username</mat-label>
+          <input matInput type="text" id="username" name="username" placeholder="Enter your username"
+            formControlName="username" required />
+          <mat-error *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched">
+            <div *ngIf="signupForm.get('username')?.hasError('required')">Username is required.</div>
+            <div *ngIf="signupForm.get('username')?.hasError('minlength')">Username must be at least 3 characters long.</div>
+          </mat-error>
+        </mat-form-field>
+  
+      <!-- Email Field -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" id="email" name="email" placeholder="Enter your email"
+            formControlName="email" required />
+          <mat-error *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+            <div *ngIf="signupForm.get('email')?.hasError('required')">Email is required.</div>
+            <div *ngIf="signupForm.get('email')?.hasError('email')">Please enter a valid email.</div>
+          </mat-error>
+        </mat-form-field>
+  
+      <!-- Password Field -->
+        <mat-form-field appearance="outline" class="flex flex-row items-center">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="passwordVisible() ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Enter your password"
+            required
+          />
+          <button
+            mat-icon-button
+            type="button"
+            (click)="togglePasswordVisibility('password')"
+            [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+          >
+            <mat-icon>{{ passwordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="signupForm.get('password')?.hasError('required')">Password is required.</mat-error>
+          <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">Password must be at least 6 characters long.</mat-error>
+        </mat-form-field>
+  
+  
+      <!-- Confirm Password Field -->
+        <mat-form-field appearance="outline" class="flex flex-row items-center">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput    [type]="confirmPasswordVisible() ? 'text' : 'password'"
+          id="confirm-password" name="confirm-password" placeholder="Confirm your password"
+            formControlName="confirmPassword" required />
+            <button
+            mat-icon-button
+            type="button"
+            (click)="togglePasswordVisibility('confirm')"
+            [attr.aria-label]="confirmPasswordVisible() ? 'Hide password' : 'Show password'"
+          >
+            <mat-icon>{{ confirmPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched">
+            <div *ngIf="signupForm.get('confirmPassword')?.hasError('required')">Confirm Password is required.</div>
+            <div *ngIf="signupForm.get('confirmPassword')?.hasError('minlength')">Confirm Password must be at least 6 characters long.</div>
+            <div *ngIf="signupForm.get('confirmPassword')?.hasError('passwordsMismatch')">Passwords do not match.</div>
+          </mat-error>
+        </mat-form-field>
+  
+      <!-- Submit Button -->
+      <button mat-flat-button color="primary" type="button" (click)="handleSubmit()" [disabled]="signupForm.invalid"
+        class="w-full py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+        Sign Up
+      </button>
+      <div class="text-center">
+        <p class="text-gray-600">Already have an account?
+          <a routerLink="/login" class="text-blue-600 font-medium hover:underline">Log In</a>
+        </p>
+      </div>
+    </form>
+  
+  </main>
+  

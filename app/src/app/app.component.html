@@ -1,0 +1,41 @@
+<nav class="bg-white shadow-md sticky top-0 z-10">
+  <div class="container mx-auto flex justify-between items-center px-6 py-4">
+    <h1 class="text-2xl tracking-wide">
+      AI Wellness Coach
+    </h1>
+    <nav class="flex items-center space-x-6">
+      
+      <!-- If user data exists, show user info and logout button -->
+      <ng-container *ngIf="user; else loggedOut">
+        <span class="text-lg font-semibold text-gray-800">
+          Welcome, {{ user.username }} <!-- Display the first name or any other user data -->
+        </span>
+        <a
+          class="bg-red-600 text-white px-4 py-2 rounded-md hover:text-slate-900 hover:bg-white hover:border-red-600"
+          (click)="logout()"
+        >
+          Log Out
+        </a>
+      </ng-container>
+  
+      <!-- If user data doesn't exist, show Sign Up and Log In buttons -->
+      <ng-template #loggedOut>
+        <a
+          class="border-blue-600 border-1 px-4 py-2 rounded-md hover:text-white hover:border-white hover:bg-blue-600"
+          routerLink="/signup"
+        >
+          Sign Up
+        </a>
+  
+        <a
+          class="bg-blue-600 border-1 text-white px-4 py-2 rounded-md hover:text-slate-900 hover:bg-white hover:border-blue-600"
+          routerLink="/login"
+        >
+          Log In
+        </a>
+      </ng-template>
+    </nav>
+  </div>
+  
+</nav>
+<router-outlet></router-outlet>
