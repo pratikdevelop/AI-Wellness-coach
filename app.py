@@ -15,26 +15,28 @@ from bson.json_util import dumps
 
 app = Flask(__name__)
 CORS(app)
+from dotenv import load_dotenv
 
+load_dotenv()
+MONGO_URL = os.getenv("MONGO_URL")
 # MongoDB Connection
-client = MongoClient(
-    "mongodb+srv://devopsdeveloper98:n8kTwBLCwsSJYmIA@custer-o.qj7um.mongodb.net/app-db?retryWrites=true&w=majority&appName=custer-o"
-)
+client = MongoClient(MONGO_URL)
 db = client['wellness_db']
 users_collection = db['users']
 logs_collection = db['logs']
 admin_collection = db['admin']
 
 # Flask-Mail Configuration
-app.config['MAIL_SERVER'] = 'smtp.example.com'
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_SERVER'] = os.getenv("MAIL_SERVER")
+app.config['MAIL_PORT'] = os.getenv(
+    "MAIL_PORT", default=465)  # default is 465 for SSL
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your-email@example.com'
-app.config['MAIL_PASSWORD'] = 'your-email-password'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
 mail = Mail(app)
 
 # App secret key
-app.config['SECRET_KEY'] = "[uF8U_%p{xDG8R-%yH.b}eiK62iTr("
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 JWT_EXPIRATION_DELTA = timedelta(days=1)
 
 # Load Updated Model (calorie_predictor_v6.keras)
