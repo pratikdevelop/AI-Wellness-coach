@@ -1,0 +1,9 @@
+<div class="mt-8 bg-white rounded-lg shadow-lg p-6 space-y-4">
+    <h2 class="text-3xl font-bold text-gray-700">Mental Health Insights</h2>
+    <div *ngIf="insights">
+      <p><strong>Recent Mood Trend:</strong> {{ insights.recent_mood_trend }}</p>
+      <p><strong>Sleep and Stress Correlation:</strong> {{ insights.sleep_stress_correlation }}</p>
+      <p><strong>Suggestion:</strong> {{ insights.suggestion }}</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="fetchInsights()">Get Insights</button>
+  </div>

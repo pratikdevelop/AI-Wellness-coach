@@ -7,6 +7,7 @@ import {
   provideCharts,
   withDefaultRegisterables,
   } from 'ng2-charts';
+import { provideHttpClient } from '@angular/common/http';
 export const appConfig: ApplicationConfig = {
-  providers: [provideCharts(withDefaultRegisterables()), provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideAnimationsAsync()]
+  providers: [provideCharts(withDefaultRegisterables()), provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideAnimationsAsync(), provideHttpClient(), provideAnimationsAsync()]
 };

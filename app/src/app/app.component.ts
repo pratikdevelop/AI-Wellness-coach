@@ -26,11 +26,6 @@ export class AppComponent {
     // Subscribe to the user data observable to get updates
     this.userDataService.userData$.subscribe((userData) => {
       this.user = userData; // Update the user data whenever it changes
-      console.log(
-        'User data updated:',
-        this.user
-      );
-      
     });
   }
   logout() {

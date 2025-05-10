@@ -1,0 +1,1 @@
+<div *ngIf="mealPlan"><h2>Your Daily Meal Plan</h2><div *ngFor="let meal of mealPlan.meals"><h3>{{meal.title}}</h3><p>Calories: {{meal.nutrients.calories}}</p><p>Protein: {{meal.nutrients.protein}}g</p><p>Fat: {{meal.nutrients.fat}}g</p><p>Carbs: {{meal.nutrients.carbohydrates}}g</p></div></div>

@@ -50,7 +50,7 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
 
     axios
-      .post(`${environment.api}/login`, { email, password })
+      .post(`${environment.api}/auth/login`, { email, password })
       .then(response => {
         const result = response.data;
         if (result.token) {

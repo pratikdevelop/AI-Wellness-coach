@@ -1,73 +1,111 @@
-<div class="flex relative flex-col p-3 overflow-y-auto">
-    <section class="gradient-bg text-white py-24 text-center">
-      <div class="container mx-auto">
-        <h2 class="text-5xl font-bold mb-6">Achieve Your Fitness Goals</h2>
-        <p class="text-lg mb-8 max-w-3xl mx-auto">
-          Transform your health and well-being with AI-powered insights and
-          personalized coaching.
-        </p>
-        <a
-          routerLink="/signup"
-          class="bg-white text-blue-600 px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-gray-100 transition duration-300"
-        >
-          Get Started Today
-        </a>
-      </div>
-    </section>
-  
-    <section class="py-16 bg-gray-50">
-      <div class="container mx-auto">
-        <h2 class="text-3xl font-bold text-center mb-12">
-          Why Choose AI Wellness Coach?
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          <!-- Use ngFor for dynamic rendering -->
-          <div *ngFor="let feature of features; let index = index" class="bg-white shadow-md rounded-lg p-6 text-center hover:scale-105 transition-transform duration-300">
-            <div class="flex items-center justify-center bg-blue-600 text-white w-16 h-16 rounded-full mx-auto mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h11M9 21V3m-6 6h18M3 15h11M3 21h11m0 0V9m0 0h7" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-4">{{ feature.title }}</h3> <!-- Correct Interpolation -->
-            <p class="text-gray-600">{{ feature.description }}</p> <!-- Correct Interpolation -->
+<div class="overflow-x-hidden">
+  <!-- Hero Section (Fade-in Animation) -->
+  <section 
+    @fadeIn
+    class="gradient-bg text-white py-24 text-center px-4">
+    <div class="container mx-auto">
+      <h1 class="text-5xl font-bold mb-6 animate-pulse">
+        Your AI-Powered Wellness Journey Starts Here
+      </h1>
+      <p class="text-xl mb-8 max-w-3xl mx-auto">
+        Track fitness, mental health, and nutrition with personalized AI coaching.
+      </p>
+      <a
+        routerLink="/signup"
+        class="bg-white text-blue-600 px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-gray-100 transition duration-300 hover:scale-105">
+        Get Started Free
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Grid (Staggered Animation) -->
+  <section 
+    @staggerFadeIn
+    class="py-16 bg-gray-50 px-4">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">
+        Why Choose <span class="text-blue-600">AI Wellness Coach?</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        <!-- Feature 1: Health Tracking -->
+        <div class="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+          <div class="bg-blue-100 w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center">
+            📊
           </div>
+          <h3 class="text-xl font-bold mb-4">AI Health Tracking</h3>
+          <p class="text-gray-600">
+            Calorie prediction, BMI calculation, and Fitbit sync for real-time insights.
+          </p>
+        </div>
+
+        <!-- Feature 2: Mental Wellness -->
+        <div class="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+          <div class="bg-green-100 w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center">
+            🧠
+          </div>
+          <h3 class="text-xl font-bold mb-4">Mood & Stress Tracking</h3>
+          <p class="text-gray-600">
+            Log moods, stress levels, and get guided relaxation tips.
+          </p>
+        </div>
+
+        <!-- Feature 3: Workouts -->
+        <div class="bg-white shadow-md rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+          <div class="bg-purple-100 w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center">
+            💪
+          </div>
+          <h3 class="text-xl font-bold mb-4">Smart Workouts</h3>
+          <p class="text-gray-600">
+            Personalized exercise plans based on your activity level.
+          </p>
         </div>
       </div>
-    </section>
-  
-    <section class="bg-gray-100 py-16">
-      <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold mb-12">What Users Are Saying</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Use ngFor for dynamic rendering -->
-          <div *ngFor="let testimonial of testimonials; let index = index" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-            <p class="text-gray-600 italic">"{{ testimonial.quote }}"</p>
-            <p class="mt-4 font-bold text-blue-600">- {{ testimonial.name }}</p> <!-- Correct Interpolation -->
-          </div>
+    </div>
+  </section>
+
+  <!-- Animated Stats Section -->
+  <section 
+    @slideInRight
+    class="py-16 bg-blue-600 text-white px-4">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-12">Transform Your Wellness</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div *ngFor="let stat of stats" class="animate-bounce">
+          <p class="text-4xl font-bold">{{ stat.value }}+</p>
+          <p class="text-sm">{{ stat.label }}</p>
         </div>
       </div>
-    </section>
-  
-    <section class="py-16 text-center">
-      <div class="container mx-auto">
-        <h2 class="text-3xl font-bold mb-6">Join Us Today</h2>
-        <p class="text-lg mb-8 max-w-2xl mx-auto">
-          Sign up now and take the first step towards a healthier, happier you!
-        </p>
-        <a
-          routerLink="/signup"
-          class="bg-blue-600 text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-blue-700 transition duration-300"
-        >
-          Sign Up Now
-        </a>
+    </div>
+  </section>
+
+  <!-- Testimonials (Slider Animation) -->
+  <section class="py-16 bg-gray-100 px-4">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">User Success Stories</h2>
+      <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6">
+        <div *ngFor="let testimonial of testimonials" 
+             class="bg-white p-6 rounded-lg shadow-md min-w-[300px] snap-center">
+          <p class="text-gray-600 italic">"{{ testimonial.quote }}"</p>
+          <p class="mt-4 font-bold text-blue-600">— {{ testimonial.name }}</p>
+        </div>
       </div>
-    </section>
-  
-    <footer class="bg-blue-600 text-white py-8 text-center">
-      <div class="container mx-auto">
-        <p class="font-medium">&copy; 2025 AI Wellness Coach. All Rights Reserved.</p>
-        <p class="text-sm mt-2">Email us: support&#x40;aiwellnesscoach.com</p>
-      </div>
-    </footer>
-  </div>
-  
+    </div>
+  </section>
+
+  <!-- CTA (Pulse Animation) -->
+  <section 
+    @pulse
+    class="py-16 text-center px-4">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold mb-6">Ready to Start?</h2>
+      <p class="text-lg mb-8 max-w-2xl mx-auto">
+        Join thousands of users achieving their wellness goals.
+      </p>
+      <a
+        routerLink="/signup"
+        class="bg-blue-600 text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-blue-700 transition duration-300">
+        Sign Up Now
+      </a>
+    </div>
+  </section>
+</div>

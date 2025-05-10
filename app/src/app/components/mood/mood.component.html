@@ -1,0 +1,29 @@
+<div class="mt-8 bg-white rounded-lg shadow-lg p-6 space-y-4">
+    <h2 class="text-3xl font-bold text-gray-700">Log Your Mood</h2>
+    <form [formGroup]="moodForm" (ngSubmit)="logMood()" class="mt-4 space-y-6">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Mood</mat-label>
+        <mat-select formControlName="mood" required>
+          <mat-option value="happy">Happy</mat-option>
+          <mat-option value="sad">Sad</mat-option>
+          <mat-option value="anxious">Anxious</mat-option>
+          <mat-option value="neutral">Neutral</mat-option>
+        </mat-select>
+        <mat-error *ngIf="moodForm.get('mood')?.hasError('required')">Mood is required</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Stress Level (1-10)</mat-label>
+        <input matInput type="number" formControlName="stress_level" required min="1" max="10">
+        <mat-error *ngIf="moodForm.get('stress_level')?.hasError('required')">Stress level is required</mat-error>
+        <mat-error *ngIf="moodForm.get('stress_level')?.hasError('min') || moodForm.get('stress_level')?.hasError('max')">Stress level must be between 1 and 10</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes"></textarea>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="moodForm.invalid">Log Mood</button>
+    </form>
+  </div>

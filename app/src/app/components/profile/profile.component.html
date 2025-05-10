@@ -1,0 +1,108 @@
+<main class="container mx-auto mt-8 p-4">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h1 class="text-3xl font-bold text-gray-700 mb-6">Your Profile</h1>
+  
+      <!-- User Info Section -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4">User Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p><strong>Username:</strong> {{ user?.username || 'N/A' }}</p>
+            <p><strong>Email:</strong> {{ user?.email || 'N/A' }}</p>
+          </div>
+          <div>
+            <p><strong>Age:</strong> {{ user?.age || 0 }}</p>
+            <p><strong>Activity Level:</strong> {{ user?.activity_level || 'N/A' }}</p>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Physical Health Metrics -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4">Physical Health</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-gray-100 p-4 rounded">
+            <p><strong>Weight:</strong> {{ user?.weight || 0 }} kg</p>
+            <p><strong>Height:</strong> {{ user?.height || 0 }} cm</p>
+            <p><strong>BMI:</strong> {{ user?.bmi || 0 }}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded">
+            <p><strong>Calorie Goal:</strong> {{ user?.calorie_goal || 0 }} kcal</p>
+            <p><strong>Calories Burned:</strong> {{ user?.calories_burned || 0 }} kcal</p>
+            <p><strong>Steps:</strong> {{ user?.steps || 0 }}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded">
+            <p><strong>Nutrition:</strong></p>
+            <ul>
+              <li>Carbs: {{ user?.nutrition?.carbs || 0 }}g</li>
+              <li>Protein: {{ user?.nutrition?.protein || 0 }}g</li>
+              <li>Fat: {{ user?.nutrition?.fat || 0 }}g</li>
+            </ul>
+          </div>
+        </div>
+        <p class="mt-2"><strong>Workout Suggestion:</strong> {{ user?.workouts || 'N/A' }}</p>
+      </section>
+  
+      <!-- Mental Health Metrics -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4">Mental Health</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-gray-100 flex items-center space-x-1 p-4 rounded">
+            <p><strong>Recent Moods: </strong></p>
+              <span *ngFor="let mood of user?.recent_moods">{{ mood }}{{
+                user?.recent_moods.indexOf(mood) === user?.recent_moods.length - 1?
+                '' : ','
+                }}</span>
+          </div>
+          <div class="bg-gray-100 p-4 rounded">
+            <p><strong>Average Stress Level:</strong> {{ user?.average_stress || 'N/A' }}</p>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Gamification -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4">Achievements</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-gray-100 p-4 rounded">
+            <p><strong>Points:</strong> {{ user?.points || 0 }}</p>
+          </div>
+          <div class="bg-gray-100 p-4 rounded">
+            <p><strong>Badges:</strong></p>
+            <ul>
+              <li *ngFor="let badge of badges?.badges" class="flex items-center">
+                <mat-icon class="mr-2 text-yellow-500">star</mat-icon>{{ badge }}
+              </li>
+              <li *ngIf="!badges?.badges.length">No badges earned yet.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Fitbit Data -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4">Fitbit Data</h2>
+        <div class="bg-gray-100 p-4 rounded">
+          <p><strong>Steps:</strong> {{ user?.fitbit_data?.steps || 'N/A' }}</p>
+          <p><strong>Sleep Duration:</strong> {{ user?.fitbit_data?.sleep_duration || 'N/A' }} hours</p>
+          <p><strong>Heart Rate:</strong> {{ user?.fitbit_data?.heart_rate || 'N/A' }} bpm</p>
+        </div>
+      </section>
+  
+      <!-- Goals and Progress -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4">Goals & Progress</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div *ngFor="let key of goalKeys" class="bg-gray-100 p-4 rounded">
+            <p><strong>{{ key | titlecase }}:</strong></p>
+            <p>Goal: {{ user?.progress[key]?.goal || 'Not set' }}</p>
+            <p>Current: {{ user?.progress[key]?.current || 0 }}</p>
+            <mat-progress-bar mode="determinate" [value]="calculateProgress(user?.progress[key])"></mat-progress-bar>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Edit Profile Button -->
+      <button mat-raised-button color="primary" (click)="editProfile()">Edit Profile</button>
+    </div>
+  </main>

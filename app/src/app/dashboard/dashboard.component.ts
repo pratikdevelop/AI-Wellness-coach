@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +17,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    ReactiveFormsModule,],
+    ReactiveFormsModule,
+
+],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -25,13 +28,9 @@ export class DashboardComponent implements OnInit {
   predictionData: any = null;
   fitbitData: any = null;
   wellnessForm: FormGroup;
-  formData = {
-    age: null,
-    steps: null,
-    weight: null,
-    height: null,
-    activity_level: ''
-  };
+  formData = { age: null, steps: null, weight: null, height: null, activity_level: '', gender: '', heart_rate: null };
+
+ 
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective<'bar'> | undefined;
 
@@ -61,20 +60,24 @@ export class DashboardComponent implements OnInit {
       { data: [65, 59, 80], label: 'Series A' },
     ],
   };
+  wellnessTips: any;
 
   // Inject the UserDataService to get and update user data
-  constructor(private userDataService: UserDataService, private fb: FormBuilder) {
+  constructor(private userDataService: UserDataService, private fb: FormBuilder, private http: HttpClient) {
     this.wellnessForm = this.fb.group({
       age: ['', Validators.required],
       steps: ['', Validators.required],
       weight: ['', Validators.required],
       height: ['', Validators.required],
-      activity_level: ['']
+      activity_level: ['', Validators.required],
+      gender: ['', Validators.required],
+      heart_rate: ['', Validators.required]
     });
   }
 
   ngOnInit() {
     this.fetchUserData();
+    this.fetchWellnessTips();
   }
 
   async fetchUserData() {
@@ -88,8 +91,13 @@ export class DashboardComponent implements OnInit {
       });
       if (!response.ok) throw new Error("Failed to fetch user data");
       const data = await response.json();
-      this.user = data.profile;
-      this.fitbitData = data.profile.fitbit_data;
+      console.log(
+        "User Data:",
+        data
+      );
+      
+      this.user = data;
+      this.fitbitData = data.fitbit_data;
 
       
       this.wellnessForm.get('height')?.setValue(this.user.height);
@@ -104,6 +112,13 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  fetchWellnessTips() {
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${localStorage.getItem('token')}` });
+    this.http.get('/api/wellness_tips', { headers }).subscribe(
+      (response: any) => this.wellnessTips = response,
+      error => console.error('Error fetching tips:', error)
+    );
+  }
   async handlePrediction() {
     const data = {
       age: this.formData.age,
